@@ -1,4 +1,3 @@
-
 #include <stdio.h> 
 
 int echo1 = 13;
