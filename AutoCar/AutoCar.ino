@@ -10,9 +10,6 @@
 #define IN4 3
 #define ENA 7
 #define ENB 4
-#define SUBR 6
-#define SUBL 5
-#include <Servo.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> 
@@ -20,7 +17,6 @@
 int Duration_Front, Duration_Left, Duration_Right;
 int Distance_Front, Distance_Left, Distance_Right;
 int CASE, Front, Left, Right, value;
-Servo servo; 
 
 void setup() {
   Serial.begin(9600);
@@ -48,7 +44,7 @@ void loop() {
    {
     int mid, spd;
     char middle[8], sped[6], cmd[10];
-    // char cmd[10] = "110000100";
+    //char cmd[11] = "210000100";    
     cmd[10] = Serial.read();
     memcpy(middle, &cmd[1],5);
     memcpy(sped, &cmd[6],3);
@@ -87,22 +83,30 @@ void loop() {
         CASE = Front + Left + Right;
         switch (CASE)
           {
-              case 0 : Motor_Forward(); // 장애물 X
-                      break;
-              case 1 : Motor_Forward(); // 오른쪽
-                      break;
-              case 2 : Motor_Right(); // 왼쪽
-                      break;  
-              case 3 : Motor_Forward(); // 양 옆
-                      break;
-              case 4 : Motor_Right(); // 정면
-                      break;
-              case 5 : Motor_Left(); // 정면, 오른쪽
-                      break;
-              case 6 : Motor_Right(); // 정면, 왼쪽
-                      break;
-              case 7 : Motor_Turn(); // 180도
-                      break;
+              case 0 : 
+                Motor_Forward(); // 장애물 X
+                break;
+              case 1 : 
+                Motor_Forward(); // 오른쪽
+                break;
+              case 2 : 
+                Motor_Right(); // 왼쪽
+                break;  
+              case 3 : 
+                Motor_Forward(); // 양 옆
+                break;
+              case 4 : 
+                Motor_Right(); // 정면
+                break;
+              case 5 : 
+                Motor_Left(); // 정면, 오른쪽
+                break;
+              case 6 : 
+                Motor_Right(); // 정면, 왼쪽
+                break;
+              case 7 : 
+                Motor_Turn(); // 180도
+                break;
           }
         }
     }
@@ -120,8 +124,9 @@ void Motor_Left(){
   Serial.println("죄회전");
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
+  digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
+  delay(20);
 }
 void Motor_Turn(){
   Serial.println("180도 회전");
@@ -129,23 +134,23 @@ void Motor_Turn(){
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
+  delay(20);
 }
 void Motor_Right(){
   Serial.println("우회전");
-  digitalWrite(IN1, HIGH);
+  digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);  
+  digitalWrite(IN4, LOW);
+  delay(20); 
 }
 void Motor_Forward(){
   Serial.println("전진");
-  servo.attach(5);
-  value = 45;
-  servo.write(value);
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
+  delay(20);
 }
 
 void dis_result(void){
