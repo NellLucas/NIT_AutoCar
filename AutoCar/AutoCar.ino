@@ -16,7 +16,7 @@
 
 int Duration_Front, Duration_Left, Duration_Right;
 int Distance_Front, Distance_Left, Distance_Right;
-int CASE, Front, Left, Right, value;
+// int CASE, Front, Left, Right, value;
 
 void setup() {
   Serial.begin(9600);
@@ -44,7 +44,7 @@ void loop() {
    {
     int mid, spd;
     char middle[8], sped[6], cmd[10];
-    //char cmd[11] = "210000100";    
+    //char cmd[10] = "210000100";    
     cmd[10] = Serial.read();
     memcpy(middle, &cmd[1],5);
     memcpy(sped, &cmd[6],3);
@@ -65,14 +65,30 @@ void loop() {
         Motor_Right();
       }
     }
-    else if(cmd[0] == 2){
-        
+
+    else if(cmd[0] == 2){       
         Distance_Left = sonicdis(UL_LEFT_TRIG, UL_LEFT_ECHO);
         Distance_Right = sonicdis(UL_RIGHT_TRIG, UL_RIGHT_ECHO);
         Distance_Front = sonicdis(UL_FRONT_TRIG, UL_FRONT_ECHO);
         analogWrite(ENA, 255);
         analogWrite(ENB, 255);    
         dis_result();
+        if(Distance_Front < 20){
+          Motor_Stop();
+          Motor_Turn();
+          if(Distance_Left < 30 || Distance_Right < 30)
+          {
+            if(Distance_Right >= 30){Motor_Right();}
+            else if (Distance_Left >= 30){Motor_Left();}
+            else{Motor_Turn();}
+          }
+        }
+        else{
+          Motor_Forward();
+        }
+
+
+        /*
         if(Distance_Left < 5){Left = 2;}
         else{Left = 0;}
         if(Distance_Right < 5){Right = 1;}
@@ -108,11 +124,13 @@ void loop() {
                 Motor_Turn(); // 180도
                 break;
           }
+          */
+        
+
         }
     }
-  
-
 }
+
 void sonic(int t, int e){
   pinMode(t, OUTPUT);
   pinMode(e, INPUT);
@@ -126,15 +144,15 @@ void Motor_Left(){
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
-  delay(20);
+  delay(1000);
 }
 void Motor_Turn(){
-  Serial.println("180도 회전");
+  Serial.println("회전");
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
-  delay(20);
+  delay(500);
 }
 void Motor_Right(){
   Serial.println("우회전");
@@ -142,7 +160,7 @@ void Motor_Right(){
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
-  delay(20); 
+  delay(1000); 
 }
 void Motor_Forward(){
   Serial.println("전진");
@@ -151,6 +169,14 @@ void Motor_Forward(){
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
   delay(20);
+}
+void Motor_Stop(){
+  Serial.println("정지");
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  delay(1000);
 }
 
 void dis_result(void){
